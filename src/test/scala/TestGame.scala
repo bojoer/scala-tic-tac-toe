@@ -7,6 +7,22 @@ class TestGame extends FlatSpec with Matchers {
     Game.newBoard().length should be (9)
   }
 
+  "Start player" should "be PlayerOne" in {
+    Game.startingPlayer() should be (Player.One)
+  }
+
+  "Next player" should "be PlayerOne if no Player is current" in {
+    Game.nextPlayer(null) should be (Player.One)
+  }
+
+  "Next player" should "be PlayerOne if PlayerTwo is current" in {
+    Game.nextPlayer(Player.Two) should be (Player.One)
+  }
+
+  "Next player" should "be PlayerTwo if PlayerOne is current" in {
+    Game.nextPlayer(Player.One) should be (Player.Two)
+  }
+
   "0" should "be an allowed move" in {
     Game.isLegalMove(0) should be (true)
   }
@@ -24,23 +40,23 @@ class TestGame extends FlatSpec with Matchers {
   }
 
   "Two players" should "exist" in {
-    Player.One.id should be (1)
-    Player.Two.id should be (2)
+    Player.One.key should be ("O")
+    Player.Two.key should be ("X")
   }
 
   "New board" should "have all free spaces" in {
-    val board = new Array[Player.Value](3)
+    val board = new Array[Player.Item](3)
     Game.isSpaceFree(board, 0) should be (true)
   }
 
   "Existing board" should "not have all free spaces" in {
-    val board = new Array[Player.Value](3)
+    val board = new Array[Player.Item](3)
     board(0) = Player.One
     Game.isSpaceFree(board, 0) should be (false)
   }
 
   "Move" should "add the player onto the board" in {
-    val board = new Array[Player.Value](3)
+    val board = new Array[Player.Item](3)
     val player = Player.One
     val position = 0
 
@@ -50,7 +66,7 @@ class TestGame extends FlatSpec with Matchers {
   }
 
   "Two moves" should "add the player onto the board" in {
-    val board = new Array[Player.Value](3)
+    val board = new Array[Player.Item](3)
     val playerOne = Player.One
     val positionOne = 0
 
@@ -64,13 +80,13 @@ class TestGame extends FlatSpec with Matchers {
   }
 
   "A row win" should "not be set if no cells are set to a player" in {
-    val board = new Array[Player.Value](3)
+    val board = new Array[Player.Item](3)
     board(0) = Player.One
     Game.checkRowWin(board) should be (null)
   }
 
   "A row win" should "not be set if the cells are mixed" in {
-    val board = new Array[Player.Value](3)
+    val board = new Array[Player.Item](3)
     board(0) = Player.One
     board(1) = Player.Two
     board(2) = Player.One
@@ -79,7 +95,7 @@ class TestGame extends FlatSpec with Matchers {
   }
 
   "A row win" should "be set if all cells are the same" in {
-    val board = new Array[Player.Value](3)
+    val board = new Array[Player.Item](3)
     board(0) = Player.One
     board(1) = Player.One
     board(2) = Player.One
@@ -129,4 +145,30 @@ class TestGame extends FlatSpec with Matchers {
     board(6) = Player.One
     Game.checkBoardWin(board) should be (Player.One)
   }
+
+  "Empty board" should "show the board" in {
+    val board = Game.newBoard()
+    Game.displayBoard(board) should be (" | | \n-----\n | | \n-----\n | | \n")
+  }
+
+  "Board with PlayerOne" should "show the board" in {
+    val board = Game.newBoard()
+    board(0) = Player.One
+    Game.displayBoard(board) should be ("O| | \n-----\n | | \n-----\n | | \n")
+  }
+
+  "Board with PlayerTwo" should "show the board" in {
+    val board = Game.newBoard()
+    board(5) = Player.Two
+    Game.displayBoard(board) should be (" | | \n-----\n | |X\n-----\n | | \n")
+  }
+
+  "Board with few moves" should "show the board" in {
+    val board = Game.newBoard()
+    board(5) = Player.Two
+    board(8) = Player.One
+    board(2) = Player.Two
+    Game.displayBoard(board) should be (" | |X\n-----\n | |X\n-----\n | |O\n")
+  }
+
 }
