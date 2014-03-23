@@ -29,27 +29,28 @@ class TestGame extends FlatSpec with Matchers {
   }
 
   "New board" should "have all free spaces" in {
-    val board = Array(0,0,0)
+    val board = new Array[Player.Value](3)
     Game.isSpaceFree(board, 0) should be (true)
   }
 
   "Existing board" should "not have all free spaces" in {
-    val board = Array(1,0,0)
+    val board = new Array[Player.Value](3)
+    board(0) = Player.One
     Game.isSpaceFree(board, 0) should be (false)
   }
 
   "Move" should "add the player onto the board" in {
-    val board = Array(0,0,0)
+    val board = new Array[Player.Value](3)
     val player = Player.One
     val position = 0
 
-    val expectedBoard = Array(1,0,0)
+    val expectedBoard = Array(Player.One, null, null)
 
     Game.move(board, player, position) should be (expectedBoard)
   }
 
   "Two moves" should "add the player onto the board" in {
-    val board = Array(0,0,0)
+    val board = new Array[Player.Value](3)
     val playerOne = Player.One
     val positionOne = 0
 
@@ -57,9 +58,75 @@ class TestGame extends FlatSpec with Matchers {
     val playerTwo = Player.Two
     val positionTwo = 1
 
-    val expectedBoard = Array(1,2,0)
+    val expectedBoard = Array(Player.One, Player.Two, null)
 
     Game.move(newBoard, playerTwo, positionTwo) should be (expectedBoard)
   }
 
+  "A row win" should "not be set if no cells are set to a player" in {
+    val board = new Array[Player.Value](3)
+    board(0) = Player.One
+    Game.checkRowWin(board) should be (null)
+  }
+
+  "A row win" should "not be set if the cells are mixed" in {
+    val board = new Array[Player.Value](3)
+    board(0) = Player.One
+    board(1) = Player.Two
+    board(2) = Player.One
+
+    Game.checkRowWin(board) should be (null)
+  }
+
+  "A row win" should "be set if all cells are the same" in {
+    val board = new Array[Player.Value](3)
+    board(0) = Player.One
+    board(1) = Player.One
+    board(2) = Player.One
+
+    Game.checkRowWin(board) should be (Player.One)
+  }
+
+  "possible wins" should "be 8 possible cell groups" in {
+    val wins = Array(
+      Array(0, 1, 2),
+      Array(3, 4, 5),
+      Array(6, 7, 8),
+      Array(0, 3, 6),
+      Array(1, 4, 7),
+      Array(2, 5, 8),
+      Array(0, 4, 8),
+      Array(2, 4, 6)
+    )
+    Game.possibleWins().deep should be (wins.deep)
+  }
+
+  "No rows" should "mean no winner" in {
+    val board = Game.newBoard()
+    Game.checkBoardWin(board) should be (null)
+  }
+
+  "A row" should "mean a winner" in {
+    val board = Game.newBoard()
+    board(0) = Player.One
+    board(1) = Player.One
+    board(2) = Player.One
+    Game.checkBoardWin(board) should be (Player.One)
+  }
+
+  "A column" should "mean a winner" in {
+    val board = Game.newBoard()
+    board(1) = Player.One
+    board(4) = Player.One
+    board(7) = Player.One
+    Game.checkBoardWin(board) should be (Player.One)
+  }
+
+  "A diagnal" should "mean a winner" in {
+    val board = Game.newBoard()
+    board(2) = Player.One
+    board(4) = Player.One
+    board(6) = Player.One
+    Game.checkBoardWin(board) should be (Player.One)
+  }
 }
