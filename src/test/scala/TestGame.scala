@@ -2,6 +2,7 @@
 import org.scalatest._
 
 class TestGame extends FlatSpec with Matchers {
+
   "A new game" should "have nine squares" in {
     Game.newBoard().length should be (9)
   }
