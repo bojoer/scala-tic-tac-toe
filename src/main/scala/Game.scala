@@ -18,6 +18,10 @@ object Game{
     }
   }
 
+  def isEndGame(board: Array[Player.Item]) : Boolean = {
+    return board.forall(c => c != null) || Game.checkBoardWin(board) != null
+  }
+
   def isLegalMove(move:Int) : Boolean = {
     return (move >= 0 && move <= 8)
   }
@@ -27,10 +31,11 @@ object Game{
   }
 
   def move(board: Array[Player.Item], player: Player.Item, position: Int) : Array[Player.Item] = {
+    val newBoard = board.clone()
     if(isLegalMove(position) && isSpaceFree(board, position)) {
-      board(position) = player
+      newBoard(position) = player
     }
-    return board
+    return newBoard
   }
 
   def checkRowWin(row: Array[Player.Item]) : Player.Item = {

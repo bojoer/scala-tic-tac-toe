@@ -55,6 +55,25 @@ class TestGame extends FlatSpec with Matchers {
     Game.isSpaceFree(board, 0) should be (false)
   }
 
+  "New board" should "should not be ended" in {
+    val board = Game.newBoard()
+    Game.isEndGame(board) should be (false)
+  }
+
+  "Winning board" should "should be ended" in {
+    val board = Game.newBoard()
+    board(0) = Player.One
+    board(1) = Player.One
+    board(2) = Player.One
+    Game.isEndGame(board) should be (true)
+  }
+
+  "Full board" should "should be ended" in {
+    val board = new Array[Player.Item](1)
+    board(0) = Player.One
+    Game.isEndGame(board) should be (true)
+  }
+
   "Move" should "add the player onto the board" in {
     val board = new Array[Player.Item](3)
     val player = Player.One
