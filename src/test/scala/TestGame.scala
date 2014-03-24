@@ -7,35 +7,35 @@ class TestGame extends FlatSpec with Matchers {
     Game.newBoard().length should be (9)
   }
 
-  "Start player" should "be Player One" in {
+  "Starting Player" should "be Player One" in {
     Game.startingPlayer() should be (Player.One)
   }
 
-  "Next player" should "be Player One if there is no current player" in {
+  "Next Player" should "be Player One if there is no current player" in {
     Game.nextPlayer(null) should be (Player.One)
   }
 
-  "Next player" should "be Player One if Player Two is the current player" in {
+  it should "be Player One if Player Two is the current player" in {
     Game.nextPlayer(Player.Two) should be (Player.One)
   }
 
-  "Next player" should "be Player Two if Player One is the current player" in {
+  it should "be Player Two if Player One is the current player" in {
     Game.nextPlayer(Player.One) should be (Player.Two)
   }
 
-  "0" should "be an allowed move" in {
+  "Legal Move" should "allow 0" in {
     Game.isLegalMove(0) should be (true)
   }
 
-  "8" should "be an allowed move" in {
+  it should "allow 8" in {
     Game.isLegalMove(8) should be (true)
   }
 
-  "9" should "not be an allowed move" in {
+  it should "not allow 9" in {
     Game.isLegalMove(9) should be (false)
   }
 
-  "-1" should "not be an allowed move" in {
+  it should "not allow -1" in {
     Game.isLegalMove(-1) should be (false)
   }
 
@@ -44,23 +44,23 @@ class TestGame extends FlatSpec with Matchers {
     Player.Two.key should be ("X")
   }
 
-  "New board" should "have empty cells" in {
+  "Free Space" should "be true in empty board" in {
     val board = new Array[Player.Item](3)
     Game.isSpaceFree(board, 0) should be (true)
   }
 
-  "Existing board" should "not have empty cells" in {
+  it should "be false if space is filled" in {
     val board = new Array[Player.Item](3)
     board(0) = Player.One
     Game.isSpaceFree(board, 0) should be (false)
   }
 
-  "New board" should "not be ended" in {
+  "End Game" should "be false in empty board" in {
     val board = Game.newBoard()
     Game.isEndGame(board) should be (false)
   }
 
-  "Winning board" should "be ended" in {
+  it should "be true in winning board" in {
     val board = Game.newBoard()
     board(0) = Player.One
     board(1) = Player.One
@@ -68,7 +68,7 @@ class TestGame extends FlatSpec with Matchers {
     Game.isEndGame(board) should be (true)
   }
 
-  "Full board" should "be ended" in {
+  it should "be true in full board" in {
     val board = new Array[Player.Item](1)
     board(0) = Player.One
     Game.isEndGame(board) should be (true)
@@ -84,7 +84,7 @@ class TestGame extends FlatSpec with Matchers {
     Game.move(board, player, position) should be (expectedBoard)
   }
 
-  "Two moves" should "add the players onto the board" in {
+  it should "add multiple players onto the board" in {
     val board = new Array[Player.Item](3)
     val playerOne = Player.One
     val positionOne = 0
@@ -98,7 +98,7 @@ class TestGame extends FlatSpec with Matchers {
     Game.move(newBoard, playerTwo, positionTwo) should be (expectedBoard)
   }
 
-  "A bot move" should "be in a random location" in {
+  "Bot Move" should "be in a random location" in {
     val board = Game.newBoard()
     val player = Player.One
 
@@ -108,7 +108,7 @@ class TestGame extends FlatSpec with Matchers {
     newBoard.count(c => c == Player.Two) should be (0)
   }
 
-  "Two bot moves" should "be in random locations" in {
+  it should "add multiple moves into random locations" in {
     val board = Game.newBoard()
     val player = Player.One
 
@@ -119,7 +119,7 @@ class TestGame extends FlatSpec with Matchers {
     newBoardTwo.count(c => c == Player.Two) should be (0)
   }
 
-  "Bot" should "try to block an almost winning move" in {
+  it should "try to block an almost winning move" in {
     val board = Game.newBoard()
     board(0) = Player.Two
     board(1) = Player.Two
@@ -130,7 +130,7 @@ class TestGame extends FlatSpec with Matchers {
     newBoard(2) should be (Player.One)
   }
 
-  "Bot" should "try and go for a win" in {
+  it should "try and go for a win" in {
     val board = Game.newBoard()
     board(0) = Player.One
     board(3) = Player.One
@@ -155,13 +155,13 @@ class TestGame extends FlatSpec with Matchers {
     newBoard(8) should be (Player.One)
   }
 
-  "A row" should "not be a win if not all cells are filled" in {
+  "Check Row Win" should "not be a win if not all cells are filled" in {
     val board = new Array[Player.Item](3)
     board(0) = Player.One
     Game.checkRowWin(board) should be (null)
   }
 
-  "A row" should "not be a win if the cells are mixed" in {
+  it should "not be a win if the cells are mixed" in {
     val board = new Array[Player.Item](3)
     board(0) = Player.One
     board(1) = Player.Two
@@ -170,7 +170,7 @@ class TestGame extends FlatSpec with Matchers {
     Game.checkRowWin(board) should be (null)
   }
 
-  "A row" should "be a win if all cells are the same" in {
+  it should "be a win if all cells are the same" in {
     val board = new Array[Player.Item](3)
     board(0) = Player.One
     board(1) = Player.One
@@ -179,12 +179,12 @@ class TestGame extends FlatSpec with Matchers {
     Game.checkRowWin(board) should be (Player.One)
   }
 
-  "No cell groups" should "mean no winner" in {
+  "Check Board Win" should "mean no winner if no groups are filled" in {
     val board = Game.newBoard()
     Game.checkBoardWin(board) should be (null)
   }
 
-  "A row group of the same player" should "mean a winner" in {
+  it should "mean a winner if a row is filled" in {
     val board = Game.newBoard()
     board(0) = Player.One
     board(1) = Player.One
@@ -192,7 +192,7 @@ class TestGame extends FlatSpec with Matchers {
     Game.checkBoardWin(board) should be (Player.One)
   }
 
-  "A column group of the same player" should "mean a winner" in {
+  it should "mean a winner if a column is filled" in {
     val board = Game.newBoard()
     board(1) = Player.One
     board(4) = Player.One
@@ -200,7 +200,7 @@ class TestGame extends FlatSpec with Matchers {
     Game.checkBoardWin(board) should be (Player.One)
   }
 
-  "A diagnal group of the same player" should "mean a winner" in {
+  it should "mean a winner if a diagonal is filled" in {
     val board = Game.newBoard()
     board(2) = Player.One
     board(4) = Player.One
@@ -208,53 +208,53 @@ class TestGame extends FlatSpec with Matchers {
     Game.checkBoardWin(board) should be (Player.One)
   }
 
-  "A row" should "not almost be a winning row if only one cell is set" in {
+  "Almost Winning Position" should "be -1 if only one cell is set" in {
     val board = new Array[Player.Item](3)
     board(0) = Player.One
     Game.almostWinningPosition(board) should be (-1)
   }
 
-  "A row" should "not almost be a winning if multiple players are in the group" in {
+  it should "be -1 if multiple players are in the group" in {
     val board = new Array[Player.Item](3)
     board(0) = Player.One
     board(1) = Player.Two
     Game.almostWinningPosition(board) should be (-1)
   }
 
-  "A row" should "be amlost winning if two of the three cells have the same player and the other is empty" in {
+  it should "be the empty cell where a player already controls the two other cells" in {
     val board = new Array[Player.Item](3)
     board(0) = Player.One
     board(2) = Player.One
     Game.almostWinningPosition(board) should be (1)
   }
 
-  "No nearly completed rows" should "mean no almost winner" in {
+  "Check Board Almost Winning Positions" should "be -1 if no almost complete groups exist" in {
     val board = Game.newBoard()
     Game.checkBoardAlmostWinningPosition(board) should be (-1)
   }
 
-  "A nearly completed row" should "mean an almost winner" in {
+  it should "be the missing position in the row if a row is almost complete" in {
     val board = Game.newBoard()
     board(0) = Player.One
     board(1) = Player.One
     Game.checkBoardAlmostWinningPosition(board) should be (2)
   }
 
-  "A nearly completed column" should "mean an almost winner" in {
+  it should "be the missing position in the column if a column is almost complete" in {
     val board = Game.newBoard()
     board(4) = Player.One
     board(7) = Player.One
     Game.checkBoardAlmostWinningPosition(board) should be (1)
   }
 
-  "A nearly completed diagnal" should "mean an almost winner" in {
+  it should "be the missing position in the diagonal if a diagonal is almost complete" in {
     val board = Game.newBoard()
     board(2) = Player.One
     board(6) = Player.One
     Game.checkBoardAlmostWinningPosition(board) should be (4)
   }
 
-  "There" should "be 8 possible cell groups" in {
+  "Possible Wins" should "be 8 possible cell groups" in {
     val wins = Array(
       Array(0, 1, 2),
       Array(3, 4, 5),
@@ -268,24 +268,24 @@ class TestGame extends FlatSpec with Matchers {
     Game.possibleWins().deep should be (wins.deep)
   }
 
-  "Empty board" should "show the board" in {
+  "Display board" should "show an empty board" in {
     val board = Game.newBoard()
     Game.displayBoard(board) should be (" | | \n-----\n | | \n-----\n | | \n")
   }
 
-  "Board with Player One" should "show the board" in {
+  it should "show the board with Player One" in {
     val board = Game.newBoard()
     board(0) = Player.One
     Game.displayBoard(board) should be ("O| | \n-----\n | | \n-----\n | | \n")
   }
 
-  "Board with Player Two" should "show the board" in {
+  it should "show the board with Player Two" in {
     val board = Game.newBoard()
     board(5) = Player.Two
     Game.displayBoard(board) should be (" | | \n-----\n | |X\n-----\n | | \n")
   }
 
-  "Board with few moves" should "show the board" in {
+  it should "show the board with a few moves from both players" in {
     val board = Game.newBoard()
     board(5) = Player.Two
     board(8) = Player.One
@@ -293,12 +293,12 @@ class TestGame extends FlatSpec with Matchers {
     Game.displayBoard(board) should be (" | |X\n-----\n | |X\n-----\n | |O\n")
   }
 
-  "A non winning game" should "display a draw message" in {
+  "Display Winner" should "display a draw message if no winner exist" in {
     val board = Game.newBoard()
     Game.displayWinner(board) should be ("Game is a Draw!")
   }
 
-  "A winning game" should "display the winner message" in {
+  it should "display the winner message if a winner exists" in {
     val board = Game.newBoard()
     board(5) = Player.Two
     board(8) = Player.Two
@@ -306,7 +306,7 @@ class TestGame extends FlatSpec with Matchers {
     Game.displayWinner(board) should be ("Winner is Player Two (X)!")
   }
 
-  "A game" should "show show the result" in {
+  "Display Result" should "show show the result" in {
     val board = Game.newBoard()
     board(0) = Player.Two
     board(1) = Player.Two
