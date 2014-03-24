@@ -3,40 +3,45 @@ import org.scalatest._
 
 import java.io._
 
-class TestMain extends FlatSpec with Matchers{
+class TestMain extends FlatSpec with Matchers {
 
-  "A winning game by PlayerOne" should "end in a win" in {
+  "A winning game by Player One" should "end in a win" in {
     // O|O|O
     // -----
     // X|X|
     // -----
     //  | |
 
-    testGame("0\n3\n1\n4\n2\n5", "Winner is Player One (O)!")
+    val moves = Array(0, 3, 1, 4, 2)
+    testGame(moves, "Winner is Player One (O)!")
   }
 
-  "A winning game by PlayerTwo" should "end in a win" in {
+  "A winning game by Player Two" should "end in a win" in {
     // O|O|
     // -----
     // X|X|X
     // -----
     // O| |
 
-    testGame("0\n3\n1\n4\n6\n5",  "Winner is Player Two (X)!")
+    val moves = Array(0, 3, 1, 4, 6, 5)
+    testGame(moves, "Winner is Player Two (X)!")
   }
 
 
   "A drawing game" should "end in a draw" in {
     // O|X|O
     // -----
-    // X|O|X
+    // X|O|O
     // -----
-    // O|O|X
+    // X|O|X
 
-    testGame("0\n1\n4\n8\n5\n3\n2\n6\n7", "Game is a Draw!")
+    val moves = Array(0, 1, 4, 8, 5, 3, 2, 6, 7)
+    testGame(moves, "Game is a Draw!")
   }
 
-  def testGame(input: String, result: String) {
+  def testGame(moves: Array[Int], result: String) {
+
+    val input = moves.mkString("\n")
 
     val reader = new StringReader(input)
     val br = new BufferedReader(reader)
@@ -48,7 +53,6 @@ class TestMain extends FlatSpec with Matchers{
 
     val winningMessage = writer.toString().reverse.take(result.length).reverse
     winningMessage should be (result)
-
   }
 }
 
