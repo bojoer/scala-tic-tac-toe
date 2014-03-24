@@ -12,16 +12,7 @@ class TestMain extends FlatSpec with Matchers{
     // -----
     //  | |
 
-    val reader = new StringReader("0\n3\n1\n4\n2\n5")
-    val br = new BufferedReader(reader)
-
-    val writer = new StringWriter()
-    val bw = new BufferedWriter(writer)
-
-    Main.playGame(br, bw)
-
-    val winningMessage = writer.toString().reverse.take(25).reverse
-    winningMessage should be ("Winner is Player One (O)!")
+    testGame("0\n3\n1\n4\n2\n5", "Winner is Player One (O)!")
   }
 
   "A winning game by PlayerTwo" should "end in a win" in {
@@ -31,16 +22,7 @@ class TestMain extends FlatSpec with Matchers{
     // -----
     // O| |
 
-    val reader = new StringReader("0\n3\n1\n4\n6\n5")
-    val br = new BufferedReader(reader)
-
-    val writer = new StringWriter()
-    val bw = new BufferedWriter(writer)
-
-    Main.playGame(br, bw)
-
-    val winningMessage = writer.toString().reverse.take(25).reverse
-    winningMessage should be ("Winner is Player Two (X)!")
+    testGame("0\n3\n1\n4\n6\n5",  "Winner is Player Two (X)!")
   }
 
 
@@ -51,7 +33,12 @@ class TestMain extends FlatSpec with Matchers{
     // -----
     // O|O|X
 
-    val reader = new StringReader("0\n1\n4\n8\n5\n3\n2\n6\n7")
+    testGame("0\n1\n4\n8\n5\n3\n2\n6\n7", "Game is a Draw!")
+  }
+
+  def testGame(input: String, result: String) {
+
+    val reader = new StringReader(input)
     val br = new BufferedReader(reader)
 
     val writer = new StringWriter()
@@ -59,7 +46,9 @@ class TestMain extends FlatSpec with Matchers{
 
     Main.playGame(br, bw)
 
-    val winningMessage = writer.toString().reverse.take(15).reverse
-    winningMessage should be ("Game is a Draw!")
+    val winningMessage = writer.toString().reverse.take(result.length).reverse
+    winningMessage should be (result)
+
   }
 }
+
