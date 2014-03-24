@@ -1,3 +1,4 @@
+import scala.util.Random
 
 object Player extends Enumeration {
   val One = Item("O")
@@ -39,6 +40,27 @@ object Game{
     return newBoard
   }
 
+  def botMove(board: Array[Player.Item], player: Player.Item) : Array[Player.Item] = {
+
+    val almostWinner = checkBoardAlmostWinningPosition(board)
+    var position = -1
+
+    if(almostWinner != -1) {
+      position = almostWinner
+    } else {
+      var availablePositions = Array.empty[Int]
+
+      for(i <- 0 until board.length){
+        if(board(i) == null) {
+          availablePositions = availablePositions :+ i
+        }
+      }
+
+      position = Random.shuffle(availablePositions.toList).head
+    }
+    return move(board, player, position)
+  }
+
   def checkRowWin(row: Array[Player.Item]) : Player.Item = {
     if(row.forall(cell => cell == row(0))){
       return row(0)
@@ -56,6 +78,26 @@ object Game{
       }
     }
     return null
+  }
+
+  def almostWinningPosition(row: Array[Player.Item]) : Int = {
+    val group = row.groupBy(x=>x)
+    if(group.keys.size == 2 && row.count(c => c == null) == 1) {
+      return row.indexWhere(c => c == null)
+    } else {
+      return -1
+    }
+  }
+
+  def checkBoardAlmostWinningPosition(board: Array[Player.Item]) : Int = {
+    for(x <- possibleWins()) {
+      val rowValues = for (i <- x) yield board(i)
+      val position = almostWinningPosition(rowValues)
+      if(position != -1) {
+        return x(position)
+      }
+    }
+    return -1
   }
 
   def possibleWins() : Array[Array[Int]] = {

@@ -98,6 +98,49 @@ class TestGame extends FlatSpec with Matchers {
     Game.move(newBoard, playerTwo, positionTwo) should be (expectedBoard)
   }
 
+  "A bot move" should "be in a random location" in {
+    val board = Game.newBoard()
+    val player = Player.One
+
+    val newBoard = Game.botMove(board, player)
+
+    newBoard.count(c => c == Player.One) should be (1)
+    newBoard.count(c => c == Player.Two) should be (0)
+  }
+
+  "Two bot moves" should "be in a random location" in {
+    val board = Game.newBoard()
+    val player = Player.One
+
+    val newBoardOne = Game.botMove(board, player)
+    val newBoardTwo = Game.botMove(newBoardOne, player)
+
+    newBoardTwo.count(c => c == Player.One) should be (2)
+    newBoardTwo.count(c => c == Player.Two) should be (0)
+  }
+
+  "Bot" should "try to block an almost winning move" in {
+    val board = Game.newBoard()
+    board(0) = Player.Two
+    board(1) = Player.Two
+    val player = Player.One
+
+    val newBoard = Game.botMove(board, player)
+
+    newBoard(2) should be (Player.One)
+  }
+
+  "Bot" should "try and got for a win" in {
+    val board = Game.newBoard()
+    board(0) = Player.One
+    board(3) = Player.One
+    val player = Player.One
+
+    val newBoard = Game.botMove(board, player)
+
+    newBoard(6) should be (Player.One)
+  }
+
   "A row win" should "not be set if no cells are set to a player" in {
     val board = new Array[Player.Item](3)
     board(0) = Player.One
@@ -120,20 +163,6 @@ class TestGame extends FlatSpec with Matchers {
     board(2) = Player.One
 
     Game.checkRowWin(board) should be (Player.One)
-  }
-
-  "possible wins" should "be 8 possible cell groups" in {
-    val wins = Array(
-      Array(0, 1, 2),
-      Array(3, 4, 5),
-      Array(6, 7, 8),
-      Array(0, 3, 6),
-      Array(1, 4, 7),
-      Array(2, 5, 8),
-      Array(0, 4, 8),
-      Array(2, 4, 6)
-    )
-    Game.possibleWins().deep should be (wins.deep)
   }
 
   "No rows" should "mean no winner" in {
@@ -163,6 +192,66 @@ class TestGame extends FlatSpec with Matchers {
     board(4) = Player.One
     board(6) = Player.One
     Game.checkBoardWin(board) should be (Player.One)
+  }
+
+  "A almost row win" should "not be set if no cells are set to a player" in {
+    val board = new Array[Player.Item](3)
+    board(0) = Player.One
+    Game.almostWinningPosition(board) should be (-1)
+  }
+
+  "A almost row win" should "not be set if mutliple players are in the group" in {
+    val board = new Array[Player.Item](3)
+    board(0) = Player.One
+    board(1) = Player.Two
+    Game.almostWinningPosition(board) should be (-1)
+  }
+
+  "A almost row win" should "be set if two of the same player are in the group" in {
+    val board = new Array[Player.Item](3)
+    board(0) = Player.One
+    board(2) = Player.One
+    Game.almostWinningPosition(board) should be (1)
+  }
+
+  "No nearly completed rows" should "mean no almost winner" in {
+    val board = Game.newBoard()
+    Game.checkBoardAlmostWinningPosition(board) should be (-1)
+  }
+
+  "A nearly completed row" should "mean an almost winner" in {
+    val board = Game.newBoard()
+    board(0) = Player.One
+    board(1) = Player.One
+    Game.checkBoardAlmostWinningPosition(board) should be (2)
+  }
+
+  "A nearly completed column" should "mean an almost winner" in {
+    val board = Game.newBoard()
+    board(4) = Player.One
+    board(7) = Player.One
+    Game.checkBoardAlmostWinningPosition(board) should be (1)
+  }
+
+  "A nearly completed diagnal" should "mean an almost winner" in {
+    val board = Game.newBoard()
+    board(2) = Player.One
+    board(6) = Player.One
+    Game.checkBoardAlmostWinningPosition(board) should be (4)
+  }
+
+  "possible wins" should "be 8 possible cell groups" in {
+    val wins = Array(
+      Array(0, 1, 2),
+      Array(3, 4, 5),
+      Array(6, 7, 8),
+      Array(0, 3, 6),
+      Array(1, 4, 7),
+      Array(2, 5, 8),
+      Array(0, 4, 8),
+      Array(2, 4, 6)
+    )
+    Game.possibleWins().deep should be (wins.deep)
   }
 
   "Empty board" should "show the board" in {
