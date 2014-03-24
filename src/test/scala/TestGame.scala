@@ -190,4 +190,25 @@ class TestGame extends FlatSpec with Matchers {
     Game.displayBoard(board) should be (" | |X\n-----\n | |X\n-----\n | |O\n")
   }
 
+  "A non winning game" should "display a draw message" in {
+    val board = Game.newBoard()
+    Game.displayWinner(board) should be ("Game is a Draw!")
+  }
+
+  "A winning game" should "display the winner message" in {
+    val board = Game.newBoard()
+    board(5) = Player.Two
+    board(8) = Player.Two
+    board(2) = Player.Two
+    Game.displayWinner(board) should be ("Winner is Player Two (X)!")
+  }
+
+  "A game" should "show show the result" in {
+    val board = Game.newBoard()
+    board(0) = Player.Two
+    board(1) = Player.Two
+    board(2) = Player.Two
+    Game.displayResult(board) should be ("\nX|X|X\n-----\n | | \n-----\n | | \n\nWinner is Player Two (X)!")
+  }
+
 }

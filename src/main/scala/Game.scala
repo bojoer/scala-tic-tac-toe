@@ -1,3 +1,4 @@
+
 object Player extends Enumeration {
   val One = Item("O")
   val Two = Item("X")
@@ -84,5 +85,18 @@ object Game{
       a(7),
       a(8)
     )
+  }
+
+  def displayWinner(board: Array[Player.Item]) : String = {
+    val winner = Game.checkBoardWin(board)
+    if(winner == null) {
+      return "Game is a Draw!"
+    } else {
+      return "Winner is Player %s (%s)!" format (winner, winner.key)
+    }
+  }
+
+  def displayResult(board: Array[Player.Item]) : String = {
+    return "\n%s\n%s" format (displayBoard(board), displayWinner(board))
   }
 }
