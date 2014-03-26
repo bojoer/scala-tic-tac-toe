@@ -1,9 +1,10 @@
+package com.markdessain.game
 
 import org.scalatest._
 
 class TestGame extends FlatSpec with Matchers {
 
-  "A new game" should "have nine cells" in {
+  "A new com.markdessain.game" should "have nine cells" in {
     Game.newBoard().length should be (9)
   }
 

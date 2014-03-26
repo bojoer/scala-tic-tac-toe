@@ -1,3 +1,5 @@
+package com.markdessain.game
+
 import scala.util.Random
 
 object Player extends Enumeration {

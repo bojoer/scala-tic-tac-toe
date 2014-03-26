@@ -1,9 +1,12 @@
+package com.markdessain.game
 
+import com.markdessain.game.Console
+import java.io.Console
 import org.scalatest._
 
 import java.io._
 
-class TestMain extends FlatSpec with Matchers {
+class TestConsole extends FlatSpec with Matchers {
 
   "A winning game by Player One" should "end in a win" in {
     // O|O|O
@@ -49,7 +52,7 @@ class TestMain extends FlatSpec with Matchers {
     val writer = new StringWriter()
     val bw = new BufferedWriter(writer)
 
-    Main.playGame(br, bw)
+    Console.playGame(br, bw)
 
     val winningMessage = writer.toString().reverse.take(result.length).reverse
     winningMessage should be (result)
