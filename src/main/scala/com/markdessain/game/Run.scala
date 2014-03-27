@@ -2,7 +2,7 @@ package com.markdessain.game
 
 import java.io._
 
-object Console {
+object Run {
   def main(args: Array[String]) {
     val br = getBufferedReader()
     val bw = getBufferedWriter()
