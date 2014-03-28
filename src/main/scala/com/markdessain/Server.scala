@@ -2,7 +2,7 @@ package com.markdessain
 
 import akka.actor.{Props, ActorSystem}
 import spray.servlet.WebBoot
-import com.markdessain.actor.MyServiceActor
+import com.markdessain.actor.GameActor
 
 // this class is instantiated by the servlet initializer
 // it needs to have a default constructor and implement
@@ -13,6 +13,6 @@ class Server extends WebBoot {
   val system = ActorSystem("example")
 
   // the service actor replies to incoming HttpRequests
-  val serviceActor = system.actorOf(Props[MyServiceActor])
+  val serviceActor = system.actorOf(Props[GameActor])
 
 }

@@ -1,15 +1,43 @@
 package com.markdessain.game
 
 import scala.util.Random
+import spray.json._
+import DefaultJsonProtocol._
 
 object Player extends Enumeration {
   val One = Item("O")
   val Two = Item("X")
 
-  final case class Item(key: String) extends Val {}
+  final case class Item(name: String) extends Val {}
+
+  def find(name : String) : Player.Item = {
+    if(name == "O") {
+      return Player.One
+    }
+    if(name == "X") {
+      return Player.Two
+    }
+
+    return null
+  }
+
+  implicit object PlayerJsonFormat extends RootJsonFormat[Player.Item] {
+    def write(player: Player.Item) : JsString = {
+      if(player == null) {
+        return JsString("")
+      } else {
+        return JsString(player.name)
+      }
+    }
+
+    def read(value: JsValue) : Player.Item = {
+      return Player.find(value.toString()(1).toString())
+    }
+  }
 }
 
-object Game{
+
+object TicTacToe{
   def newBoard() : Array[Player.Item] = { return new Array[Player.Item](9) }
 
   def startingPlayer() : Player.Item = { return nextPlayer(null) }
@@ -23,7 +51,7 @@ object Game{
   }
 
   def isEndGame(board: Array[Player.Item]) : Boolean = {
-    return board.forall(c => c != null) || Game.checkBoardWin(board) != null
+    return board.forall(c => c != null) || TicTacToe.checkBoardWin(board) != null
   }
 
   def isLegalMove(move:Int) : Boolean = {
@@ -70,7 +98,7 @@ object Game{
       return null
     }
   }
-  
+
   def checkBoardWin(board: Array[Player.Item]) : Player.Item = {
     for(x <- possibleWins()) {
       val rowValues = for (i <- x) yield board(i)
@@ -116,7 +144,7 @@ object Game{
   }
 
   def displayBoard(board: Array[Player.Item]) : String = {
-    val a = for (x <- board) yield if(x == null) " " else x.key
+    val a = for (x <- board) yield if(x == null) " " else x.name
 
     return "%s|%s|%s\n-----\n%s|%s|%s\n-----\n%s|%s|%s\n" format(
       a(0),
@@ -132,15 +160,25 @@ object Game{
   }
 
   def displayWinner(board: Array[Player.Item]) : String = {
-    val winner = Game.checkBoardWin(board)
+    val winner = TicTacToe.checkBoardWin(board)
     if(winner == null) {
       return "Game is a Draw!"
     } else {
-      return "Winner is Player %s (%s)!" format (winner, winner.key)
+      return "Winner is Player %s (%s)!" format (winner, winner.name)
     }
   }
 
   def displayResult(board: Array[Player.Item]) : String = {
     return "\n%s\n%s" format (displayBoard(board), displayWinner(board))
+  }
+
+  def boardToString(board: Array[Player.Item]) : String = {
+    return board.toJson.prettyPrint
+  }
+
+  def stringToBoard(boardString: String) : Array[Player.Item] = {
+    val jsonAst = JsonParser(boardString)
+
+    return jsonAst.convertTo[Array[Player.Item]]
   }
 }

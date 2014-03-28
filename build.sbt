@@ -4,9 +4,11 @@ version := "1.0"
 
 scalaVersion := "2.10.3"
 
-scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
-
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0" % "test"
+
+resolvers += "spray" at "http://repo.spray.io/"
+
+libraryDependencies += "io.spray" %%  "spray-json" % "1.2.5"
 
 libraryDependencies ++= {
   val akkaV = "2.3.0"
