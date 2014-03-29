@@ -16,9 +16,9 @@ class TestGame extends FlatSpec with Matchers with ScalatestRouteTest with Game 
 
     val response =
 """{
-  "board": ["", "", "", "", "", "", "", "", ""],
-  "next_player": "O",
-  "winner": ""
+  "board": [-1, -1, -1, -1, -1, -1, -1, -1, -1],
+  "next_player": 0,
+  "winner": -1
 }"""
 
     Get("/new") ~> routes ~> check {
@@ -29,16 +29,16 @@ class TestGame extends FlatSpec with Matchers with ScalatestRouteTest with Game 
   "/move" should "return the new board" in {
     val move =
 """{
-  "board": ["", "", "", "", "", "", "", "", ""],
-  "current_player": "X",
+  "board": [-1, -1, -1, -1, -1, -1, -1, -1, -1],
+  "current_player": 1,
   "position": 1
 }"""
 
     val response =
 """{
-  "board": ["", "X", "", "", "", "", "", "", ""],
-  "next_player": "O",
-  "winner": ""
+  "board": [-1, 1, -1, -1, -1, -1, -1, -1, -1],
+  "next_player": 0,
+  "winner": -1
 }"""
 
     Get ("/move", HttpEntity(ContentType(`application/json`, `UTF-8`), move)) ~> routes ~> check {
@@ -49,16 +49,16 @@ class TestGame extends FlatSpec with Matchers with ScalatestRouteTest with Game 
   it should "return the winner" in {
     val move =
 """{
-  "board": ["X", "X", "", "", "", "", "", "", ""],
-  "current_player": "X",
+  "board": [1, 1, -1, -1, -1, -1, -1, -1, -1],
+  "current_player": 1,
   "position": 2
 }"""
 
     val response =
 """{
-  "board": ["X", "X", "X", "", "", "", "", "", ""],
-  "next_player": "O",
-  "winner": "X"
+  "board": [1, 1, 1, -1, -1, -1, -1, -1, -1],
+  "next_player": 0,
+  "winner": 1
 }"""
 
     Get ("/move", HttpEntity(ContentType(`application/json`, `UTF-8`), move)) ~> routes ~> check {
@@ -70,16 +70,16 @@ class TestGame extends FlatSpec with Matchers with ScalatestRouteTest with Game 
   it should "not allow an illegal move" in {
     val move =
       """{
-  "board": ["", "O", "", "", "", "", "", "", ""],
-  "current_player": "X",
+  "board": [-1, 0, -1, -1, -1, -1, -1, -1, -1],
+  "current_player": 1,
   "position": 10
 }"""
 
     val response =
       """{
-  "board": ["", "O", "", "", "", "", "", "", ""],
-  "next_player": "X",
-  "winner": ""
+  "board": [-1, 0, -1, -1, -1, -1, -1, -1, -1],
+  "next_player": 1,
+  "winner": -1
 }"""
 
     Get ("/move", HttpEntity(ContentType(`application/json`, `UTF-8`), move)) ~> routes ~> check {

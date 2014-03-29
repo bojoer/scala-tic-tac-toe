@@ -7,41 +7,41 @@ import spray.json.DefaultJsonProtocol._
 import spray.httpx.SprayJsonSupport
 
 
-object Player extends Enumeration {
-  val One = Item("O")
-  val Two = Item("X")
+object PlayerEnum extends Enumeration {
+  val One = Value("O")
+  val Two = Value("X")
 
-  final case class Item(name: String) extends Val {}
+  final case class Player(name: String) extends Val {}
 
-  def find(name : String) : Player.Item = {
-    if(name == "O") {
-      return Player.One
+  def find(i : Int) : PlayerEnum.Value = {
+    if(i == 0) {
+      return PlayerEnum.One
     }
-    if(name == "X") {
-      return Player.Two
+    if(i == 1) {
+      return PlayerEnum.Two
     }
 
     return null
   }
 
-  implicit object PlayerJsonFormat extends RootJsonFormat[Player.Item] {
-    def write(player: Player.Item) : JsString = {
+  implicit object PlayerJsonFormat extends RootJsonFormat[PlayerEnum.Value] {
+    def write(player: PlayerEnum.Value) : JsNumber = {
       if(player == null) {
-        return JsString("")
+        return JsNumber(-1)
       } else {
-        return JsString(player.name)
+        return JsNumber(player.id)
       }
     }
 
-    def read(value: JsValue) : Player.Item = {
-      return Player.find(value.toString()(1).toString())
+    def read(value: JsValue) : PlayerEnum.Value = {
+      return PlayerEnum.find(value.convertTo[Int])
     }
   }
 }
 
 
-case class MoveInput(board: Array[Player.Item], current_player: Player.Item, position: Int)
-case class MoveOutput(board: Array[Player.Item], next_player: Player.Item, winner: Player.Item)
+case class MoveInput(board: Array[PlayerEnum.Value], current_player: PlayerEnum.Value, position: Int)
+case class MoveOutput(board: Array[PlayerEnum.Value], next_player: PlayerEnum.Value, winner: PlayerEnum.Value)
 
 
 object MoveJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
@@ -54,19 +54,19 @@ object MoveJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
 
 
 object TicTacToe{
-  def newBoard() : Array[Player.Item] = { return new Array[Player.Item](9) }
+  def newBoard() : Array[PlayerEnum.Value] = { return new Array[PlayerEnum.Value](9) }
 
-  def startingPlayer() : Player.Item = { return nextPlayer(null) }
+  def startingPlayer() : PlayerEnum.Value = { return nextPlayer(null) }
 
-  def nextPlayer(currentPlayer : Player.Item) : Player.Item = {
-    if(currentPlayer == Player.One) {
-      return Player.Two
+  def nextPlayer(currentPlayer : PlayerEnum.Value) : PlayerEnum.Value = {
+    if(currentPlayer == PlayerEnum.One) {
+      return PlayerEnum.Two
     } else {
-      return Player.One
+      return PlayerEnum.One
     }
   }
 
-  def isEndGame(board: Array[Player.Item]) : Boolean = {
+  def isEndGame(board: Array[PlayerEnum.Value]) : Boolean = {
     return board.forall(c => c != null) || TicTacToe.checkBoardWin(board) != null
   }
 
@@ -74,15 +74,15 @@ object TicTacToe{
     return (move >= 0 && move <= 8)
   }
 
-  def isSpaceFree(board: Array[Player.Item], move:Int) : Boolean = {
+  def isSpaceFree(board: Array[PlayerEnum.Value], move:Int) : Boolean = {
     return board(move) == null
   }
 
-  def canMove(board: Array[Player.Item], position: Int) : Boolean = {
+  def canMove(board: Array[PlayerEnum.Value], position: Int) : Boolean = {
     return isLegalMove(position) && isSpaceFree(board, position)
   }
 
-  def move(board: Array[Player.Item], player: Player.Item, position: Int) : Array[Player.Item] = {
+  def move(board: Array[PlayerEnum.Value], player: PlayerEnum.Value, position: Int) : Array[PlayerEnum.Value] = {
     val newBoard = board.clone()
     if(canMove(board, position)) {
       newBoard(position) = player
@@ -90,7 +90,7 @@ object TicTacToe{
     return newBoard
   }
 
-  def botMove(board: Array[Player.Item], player: Player.Item) : Array[Player.Item] = {
+  def botMove(board: Array[PlayerEnum.Value], player: PlayerEnum.Value) : Array[PlayerEnum.Value] = {
 
     val almostWinner = checkBoardAlmostWinningPosition(board)
     var position = -1
@@ -111,7 +111,7 @@ object TicTacToe{
     return move(board, player, position)
   }
 
-  def checkRowWin(row: Array[Player.Item]) : Player.Item = {
+  def checkRowWin(row: Array[PlayerEnum.Value]) : PlayerEnum.Value = {
     if(row.forall(cell => cell == row(0))){
       return row(0)
     } else {
@@ -119,7 +119,7 @@ object TicTacToe{
     }
   }
 
-  def checkBoardWin(board: Array[Player.Item]) : Player.Item = {
+  def checkBoardWin(board: Array[PlayerEnum.Value]) : PlayerEnum.Value = {
     for(x <- possibleWins()) {
       val rowValues = for (i <- x) yield board(i)
       val rowWin = checkRowWin(rowValues)
@@ -130,17 +130,17 @@ object TicTacToe{
     return null
   }
 
-  def checkBoardWinnerName(board: Array[Player.Item]) : String = {
+  def checkBoardWinnerName(board: Array[PlayerEnum.Value]) : String = {
     val winner = TicTacToe.checkBoardWin(board)
 
     if(winner == null) {
       return ""
     }else{
-      return winner.name
+      return winner.toString()
     }
   }
 
-  def almostWinningPosition(row: Array[Player.Item]) : Int = {
+  def almostWinningPosition(row: Array[PlayerEnum.Value]) : Int = {
     val group = row.groupBy(x=>x)
     if(group.keys.size == 2 && row.count(c => c == null) == 1) {
       return row.indexWhere(c => c == null)
@@ -149,7 +149,7 @@ object TicTacToe{
     }
   }
 
-  def checkBoardAlmostWinningPosition(board: Array[Player.Item]) : Int = {
+  def checkBoardAlmostWinningPosition(board: Array[PlayerEnum.Value]) : Int = {
     for(x <- possibleWins()) {
       val rowValues = for (i <- x) yield board(i)
       val position = almostWinningPosition(rowValues)
@@ -173,8 +173,8 @@ object TicTacToe{
     )
   }
 
-  def displayBoard(board: Array[Player.Item]) : String = {
-    val a = for (x <- board) yield if(x == null) " " else x.name
+  def displayBoard(board: Array[PlayerEnum.Value]) : String = {
+    val a = for (x <- board) yield if(x == null) " " else x
 
     return "%s|%s|%s\n-----\n%s|%s|%s\n-----\n%s|%s|%s\n" format(
       a(0),
@@ -189,26 +189,26 @@ object TicTacToe{
     )
   }
 
-  def displayWinner(board: Array[Player.Item]) : String = {
+  def displayWinner(board: Array[PlayerEnum.Value]) : String = {
     val winner = TicTacToe.checkBoardWin(board)
     if(winner == null) {
       return "Game is a Draw!"
     } else {
-      return "Winner is Player %s (%s)!" format (winner, winner.name)
+      return "Winner is Player %s!" format (winner)
     }
   }
 
-  def displayResult(board: Array[Player.Item]) : String = {
+  def displayResult(board: Array[PlayerEnum.Value]) : String = {
     return "\n%s\n%s" format (displayBoard(board), displayWinner(board))
   }
 
-  def boardToString(board: Array[Player.Item]) : String = {
+  def boardToString(board: Array[PlayerEnum.Value]) : String = {
     return board.toJson.prettyPrint
   }
 
-  def stringToBoard(boardString: String) : Array[Player.Item] = {
+  def stringToBoard(boardString: String) : Array[PlayerEnum.Value] = {
     val jsonAst = JsonParser(boardString)
 
-    return jsonAst.convertTo[Array[Player.Item]]
+    return jsonAst.convertTo[Array[PlayerEnum.Value]]
   }
 }

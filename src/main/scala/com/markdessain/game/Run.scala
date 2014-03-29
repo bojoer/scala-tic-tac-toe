@@ -37,7 +37,7 @@ object Run {
     return new BufferedWriter(writer)
   }
 
-  def playerInput(board: Array[Player.Item], player: Player.Item, br: BufferedReader, bw: BufferedWriter) : String = {
+  def playerInput(board: Array[PlayerEnum.Value], player: PlayerEnum.Value, br: BufferedReader, bw: BufferedWriter) : String = {
     bw.write("\n")
     bw.write("Current Board:")
     bw.write("\n")
@@ -48,7 +48,7 @@ object Run {
     return br.readLine()
   }
 
-  def displayResult(board: Array[Player.Item], bw: BufferedWriter) {
+  def displayResult(board: Array[PlayerEnum.Value], bw: BufferedWriter) {
     val result = TicTacToe.displayResult(board)
     bw.write(result)
     bw.flush()
