@@ -27,3 +27,5 @@ libraryDependencies ++= {
 }
 
 seq(webSettings: _*)
+
+packagerSettings
