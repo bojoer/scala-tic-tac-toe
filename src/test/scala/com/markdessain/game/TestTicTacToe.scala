@@ -317,24 +317,24 @@ class TestTicTacTow extends FlatSpec with Matchers {
 
   "Board" should "convert as a string with no moves" in {
     val board = TicTacToe.newBoard()
-    TicTacToe.boardToString(board) should be ("[\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"]")
+    TicTacToe.boardToString(board) should be ("""["", "", "", "", "", "", "", "", ""]""")
   }
 
   it should "convert as a string with moves" in {
     val board = TicTacToe.newBoard()
     board(3) = Player.One
     board(8) = Player.Two
-    TicTacToe.boardToString(board) should be ("[\"\", \"\", \"\", \"O\", \"\", \"\", \"\", \"\", \"X\"]")
+    TicTacToe.boardToString(board) should be ("""["", "", "", "O", "", "", "", "", "X"]""")
   }
 
   it should "be generated from a string with no moves" in {
-    val boardString = "[\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"]"
+    val boardString = """["", "", "", "", "", "", "", "", ""]"""
     val board = TicTacToe.newBoard()
     TicTacToe.stringToBoard(boardString) should be (board)
   }
 
   it should "be generated from a string with moves" in {
-    val boardString = "[\"\",\"\",\"\",\"O\",\"\",\"\",\"\",\"\",\"X\"]"
+    val boardString = """["", "", "", "O", "", "", "", "", "X"]"""
     val board = TicTacToe.newBoard()
     board(3) = Player.One
     board(8) = Player.Two

@@ -34,12 +34,9 @@ trait Game extends HttpService {
 
   val moveRoute = path("move") {
     def playMove(move: MoveInput) : MoveOutput = {
-      println(move)
       val player = Player.find(move.current_player)
       val newBoard = TicTacToe.move(move.board, player, move.position)
       val nextPlayer = TicTacToe.nextPlayer(player)
-
-      println(newBoard)
       return MoveOutput(newBoard, nextPlayer.name)
     }
 
