@@ -3,6 +3,12 @@ package com.markdessain.game
 import scala.util.Random
 import spray.json._
 import DefaultJsonProtocol._
+import spray.json.JsonParser
+
+case class Board(cells: Array[Player.Item])
+case class MoveInput(board: Array[Player.Item], current_player: String, position: Int)
+case class MoveOutput(board: Array[Player.Item], next_player: String, winner: String)
+
 
 object Player extends Enumeration {
   val One = Item("O")
@@ -62,9 +68,13 @@ object TicTacToe{
     return board(move) == null
   }
 
+  def canMove(board: Array[Player.Item], position: Int) : Boolean = {
+    return isLegalMove(position) && isSpaceFree(board, position)
+  }
+
   def move(board: Array[Player.Item], player: Player.Item, position: Int) : Array[Player.Item] = {
     val newBoard = board.clone()
-    if(isLegalMove(position) && isSpaceFree(board, position)) {
+    if(canMove(board, position)) {
       newBoard(position) = player
     }
     return newBoard
@@ -108,6 +118,16 @@ object TicTacToe{
       }
     }
     return null
+  }
+
+  def checkBoardWinnerName(board: Array[Player.Item]) : String = {
+    val winner = TicTacToe.checkBoardWin(board)
+
+    if(winner == null) {
+      return ""
+    }else{
+      return winner.name
+    }
   }
 
   def almostWinningPosition(row: Array[Player.Item]) : Int = {

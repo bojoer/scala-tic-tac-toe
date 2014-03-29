@@ -99,6 +99,17 @@ class TestTicTacTow extends FlatSpec with Matchers {
     TicTacToe.move(newBoard, playerTwo, positionTwo) should be (expectedBoard)
   }
 
+  "Can Move" should "be True if legal spot" in {
+    val board = new Array[Player.Item](3)
+    TicTacToe.canMove(board, 2) should be (true)
+  }
+
+  it should "be False it someone is already in the space" in {
+    val board = new Array[Player.Item](3)
+    board(2) = Player.One
+    TicTacToe.canMove(board, 2) should be (false)
+  }
+
   "Bot Move" should "be in a random location" in {
     val board = TicTacToe.newBoard()
     val player = Player.One
@@ -207,6 +218,20 @@ class TestTicTacTow extends FlatSpec with Matchers {
     board(4) = Player.One
     board(6) = Player.One
     TicTacToe.checkBoardWin(board) should be (Player.One)
+  }
+
+
+  "Check Board Winner Name" should "mean empty string if no winner" in {
+    val board = TicTacToe.newBoard()
+    TicTacToe.checkBoardWinnerName(board) should be ("")
+  }
+
+  it should "mean the players name if a winner" in {
+    val board = TicTacToe.newBoard()
+    board(0) = Player.One
+    board(1) = Player.One
+    board(2) = Player.One
+    TicTacToe.checkBoardWinnerName(board) should be ("O")
   }
 
   "Almost Winning Position" should "be -1 if only one cell is set" in {

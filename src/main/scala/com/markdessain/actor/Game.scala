@@ -2,20 +2,14 @@ package com.markdessain.actor
 
 import akka.actor.Actor
 import spray.routing._
-import spray.http._
-import MediaTypes._
-import com.markdessain.game.{Player, TicTacToe}
-import spray.json.{DefaultJsonProtocol, JsObject, JsonParser}
+import com.markdessain.game._
+import spray.json.DefaultJsonProtocol
 import spray.httpx.SprayJsonSupport
-
-case class Board(cells: Array[Player.Item])
-case class MoveInput(board: Array[Player.Item], current_player: String, position: Int)
-case class MoveOutput(board: Array[Player.Item], next_player: String)
 
 object MoveJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val BoardFormat = jsonFormat1(Board)
   implicit val MoveInputFormat = jsonFormat3(MoveInput)
-  implicit val MoveOutputFormat = jsonFormat2(MoveOutput)
+  implicit val MoveOutputFormat = jsonFormat3(MoveOutput)
 }
 
 import MoveJsonSupport._
@@ -24,22 +18,28 @@ import MoveJsonSupport._
 trait Game extends HttpService {
 
   val newRoute = path("new") {
-    get {
+    def newBoard(s: String) : MoveOutput = {
       val board = TicTacToe.newBoard()
-      respondWithMediaType(`text/html`) {
-        complete { TicTacToe.boardToString(board) }
-      }
+      val player = TicTacToe.startingPlayer()
+      return MoveOutput(board, player.name, "")
+    }
+    get {
+      handleWith(newBoard)
     }
   }
 
   val moveRoute = path("move") {
     def playMove(move: MoveInput) : MoveOutput = {
-      val player = Player.find(move.current_player)
-      val newBoard = TicTacToe.move(move.board, player, move.position)
-      val nextPlayer = TicTacToe.nextPlayer(player)
-      return MoveOutput(newBoard, nextPlayer.name)
+      if(TicTacToe.canMove(move.board, move.position)) {
+        val player = Player.find(move.current_player)
+        val newBoard = TicTacToe.move(move.board, player, move.position)
+        val nextPlayer = TicTacToe.nextPlayer(player)
+        val winner = TicTacToe.checkBoardWinnerName(newBoard)
+        return MoveOutput(newBoard, nextPlayer.name, winner)
+      }else{
+        return MoveOutput(move.board, move.current_player, "")
+      }
     }
-
     get {
       handleWith(playMove)
     }
