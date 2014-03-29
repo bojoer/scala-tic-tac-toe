@@ -2,12 +2,9 @@ package com.markdessain.game
 
 import scala.util.Random
 import spray.json._
-import DefaultJsonProtocol._
 import spray.json.JsonParser
-
-case class Board(cells: Array[Player.Item])
-case class MoveInput(board: Array[Player.Item], current_player: String, position: Int)
-case class MoveOutput(board: Array[Player.Item], next_player: String, winner: String)
+import spray.json.DefaultJsonProtocol._
+import spray.httpx.SprayJsonSupport
 
 
 object Player extends Enumeration {
@@ -41,6 +38,19 @@ object Player extends Enumeration {
     }
   }
 }
+
+
+case class MoveInput(board: Array[Player.Item], current_player: Player.Item, position: Int)
+case class MoveOutput(board: Array[Player.Item], next_player: Player.Item, winner: Player.Item)
+
+
+object MoveJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
+//  implicit val PlayerFormat = jsonFormat1(Player.Item)
+  implicit val MoveInputFormat = jsonFormat3(MoveInput)
+  implicit val MoveOutputFormat = jsonFormat3(MoveOutput)
+}
+
+
 
 
 object TicTacToe{
