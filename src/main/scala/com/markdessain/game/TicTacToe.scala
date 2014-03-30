@@ -1,72 +1,12 @@
 package com.markdessain.game
 
 import scala.util.Random
-import spray.json._
-import spray.json.JsonParser
-import spray.json.DefaultJsonProtocol._
-import spray.httpx.SprayJsonSupport
-
-
-object PlayerEnum extends Enumeration {
-  val One = Value("O")
-  val Two = Value("X")
-
-  final case class Player(name: String) extends Val {}
-
-  def find(i : Int) : PlayerEnum.Value = {
-    if(i == 0) {
-      return PlayerEnum.One
-    }
-    if(i == 1) {
-      return PlayerEnum.Two
-    }
-
-    return null
-  }
-
-  implicit object PlayerJsonFormat extends RootJsonFormat[PlayerEnum.Value] {
-    def write(player: PlayerEnum.Value) : JsNumber = {
-      if(player == null) {
-        return JsNumber(-1)
-      } else {
-        return JsNumber(player.id)
-      }
-    }
-
-    def read(value: JsValue) : PlayerEnum.Value = {
-      return PlayerEnum.find(value.convertTo[Int])
-    }
-  }
-}
-
-
-case class MoveInput(board: Array[PlayerEnum.Value], current_player: PlayerEnum.Value, position: Int)
-case class MoveOutput(board: Array[PlayerEnum.Value], next_player: PlayerEnum.Value, winner: PlayerEnum.Value)
-
-
-object MoveJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
-//  implicit val PlayerFormat = jsonFormat1(Player.Item)
-  implicit val MoveInputFormat = jsonFormat3(MoveInput)
-  implicit val MoveOutputFormat = jsonFormat3(MoveOutput)
-}
-
-
 
 
 object TicTacToe{
-  def newBoard() : Array[PlayerEnum.Value] = { return new Array[PlayerEnum.Value](9) }
+  def newBoard() : Array[Player.Value] = { return new Array[Player.Value](9) }
 
-  def startingPlayer() : PlayerEnum.Value = { return nextPlayer(null) }
-
-  def nextPlayer(currentPlayer : PlayerEnum.Value) : PlayerEnum.Value = {
-    if(currentPlayer == PlayerEnum.One) {
-      return PlayerEnum.Two
-    } else {
-      return PlayerEnum.One
-    }
-  }
-
-  def isEndGame(board: Array[PlayerEnum.Value]) : Boolean = {
+  def isEndGame(board: Array[Player.Value]) : Boolean = {
     return board.forall(c => c != null) || TicTacToe.checkBoardWin(board) != null
   }
 
@@ -74,15 +14,15 @@ object TicTacToe{
     return (move >= 0 && move <= 8)
   }
 
-  def isSpaceFree(board: Array[PlayerEnum.Value], move:Int) : Boolean = {
+  def isSpaceFree(board: Array[Player.Value], move:Int) : Boolean = {
     return board(move) == null
   }
 
-  def canMove(board: Array[PlayerEnum.Value], position: Int) : Boolean = {
+  def canMove(board: Array[Player.Value], position: Int) : Boolean = {
     return isLegalMove(position) && isSpaceFree(board, position)
   }
 
-  def move(board: Array[PlayerEnum.Value], player: PlayerEnum.Value, position: Int) : Array[PlayerEnum.Value] = {
+  def move(board: Array[Player.Value], player: Player.Value, position: Int) : Array[Player.Value] = {
     val newBoard = board.clone()
     if(canMove(board, position)) {
       newBoard(position) = player
@@ -90,9 +30,9 @@ object TicTacToe{
     return newBoard
   }
 
-  def botMove(board: Array[PlayerEnum.Value], player: PlayerEnum.Value) : Array[PlayerEnum.Value] = {
+  def botMove(board: Array[Player.Value], player: Player.Value) : Array[Player.Value] = {
 
-    val almostWinner = checkBoardAlmostWinningPosition(board)
+    val almostWinner = checkBoardForWinningMoves(board)
     var position = -1
 
     if(almostWinner != -1) {
@@ -111,7 +51,7 @@ object TicTacToe{
     return move(board, player, position)
   }
 
-  def checkRowWin(row: Array[PlayerEnum.Value]) : PlayerEnum.Value = {
+  def checkGroupWin(row: Array[Player.Value]) : Player.Value = {
     if(row.forall(cell => cell == row(0))){
       return row(0)
     } else {
@@ -119,10 +59,10 @@ object TicTacToe{
     }
   }
 
-  def checkBoardWin(board: Array[PlayerEnum.Value]) : PlayerEnum.Value = {
-    for(x <- possibleWins()) {
+  def checkBoardWin(board: Array[Player.Value]) : Player.Value = {
+    for(x <- winGroups()) {
       val rowValues = for (i <- x) yield board(i)
-      val rowWin = checkRowWin(rowValues)
+      val rowWin = checkGroupWin(rowValues)
       if(rowWin != null) {
         return rowWin
       }
@@ -130,17 +70,7 @@ object TicTacToe{
     return null
   }
 
-  def checkBoardWinnerName(board: Array[PlayerEnum.Value]) : String = {
-    val winner = TicTacToe.checkBoardWin(board)
-
-    if(winner == null) {
-      return ""
-    }else{
-      return winner.toString()
-    }
-  }
-
-  def almostWinningPosition(row: Array[PlayerEnum.Value]) : Int = {
+  def winningPosition(row: Array[Player.Value]) : Int = {
     val group = row.groupBy(x=>x)
     if(group.keys.size == 2 && row.count(c => c == null) == 1) {
       return row.indexWhere(c => c == null)
@@ -149,10 +79,10 @@ object TicTacToe{
     }
   }
 
-  def checkBoardAlmostWinningPosition(board: Array[PlayerEnum.Value]) : Int = {
-    for(x <- possibleWins()) {
+  def checkBoardForWinningMoves(board: Array[Player.Value]) : Int = {
+    for(x <- winGroups()) {
       val rowValues = for (i <- x) yield board(i)
-      val position = almostWinningPosition(rowValues)
+      val position = winningPosition(rowValues)
       if(position != -1) {
         return x(position)
       }
@@ -160,7 +90,7 @@ object TicTacToe{
     return -1
   }
 
-  def possibleWins() : Array[Array[Int]] = {
+  def winGroups() : Array[Array[Int]] = {
     return Array(
       Array(0, 1, 2),
       Array(3, 4, 5),
@@ -173,8 +103,8 @@ object TicTacToe{
     )
   }
 
-  def displayBoard(board: Array[PlayerEnum.Value]) : String = {
-    val a = for (x <- board) yield if(x == null) " " else x
+  def displayBoard(board: Array[Player.Value]) : String = {
+    val a = for (x <- board) yield if(x == null) " " else x.id
 
     return "%s|%s|%s\n-----\n%s|%s|%s\n-----\n%s|%s|%s\n" format(
       a(0),
@@ -189,7 +119,7 @@ object TicTacToe{
     )
   }
 
-  def displayWinner(board: Array[PlayerEnum.Value]) : String = {
+  def displayWinner(board: Array[Player.Value]) : String = {
     val winner = TicTacToe.checkBoardWin(board)
     if(winner == null) {
       return "Game is a Draw!"
@@ -198,17 +128,8 @@ object TicTacToe{
     }
   }
 
-  def displayResult(board: Array[PlayerEnum.Value]) : String = {
+  def displayResult(board: Array[Player.Value]) : String = {
     return "\n%s\n%s" format (displayBoard(board), displayWinner(board))
   }
 
-  def boardToString(board: Array[PlayerEnum.Value]) : String = {
-    return board.toJson.prettyPrint
-  }
-
-  def stringToBoard(boardString: String) : Array[PlayerEnum.Value] = {
-    val jsonAst = JsonParser(boardString)
-
-    return jsonAst.convertTo[Array[PlayerEnum.Value]]
-  }
 }

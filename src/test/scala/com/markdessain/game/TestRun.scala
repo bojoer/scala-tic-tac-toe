@@ -16,7 +16,7 @@ class TestRun extends FlatSpec with Matchers {
     //  | |
 
     val moves = Array(0, 3, 1, 4, 2)
-    testGame(moves, "Winner is Player O!")
+    testGame(moves, "Winner is Player One!")
   }
 
   "A winning game by Player Two" should "end in a win" in {
@@ -27,7 +27,7 @@ class TestRun extends FlatSpec with Matchers {
     // O| |
 
     val moves = Array(0, 3, 1, 4, 6, 5)
-    testGame(moves, "Winner is Player X!")
+    testGame(moves, "Winner is Player Two!")
   }
 
 

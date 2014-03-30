@@ -11,7 +11,7 @@ object Run {
 
   def playGame(br: BufferedReader, bw: BufferedWriter) = {
     var board = TicTacToe.newBoard()
-    var player = TicTacToe.startingPlayer()
+    var player = Player.startingPlayer()
 
     while(!TicTacToe.isEndGame(board)){
       val input = playerInput(board, player, br, bw)
@@ -21,7 +21,7 @@ object Run {
         println("Invalid Move, please try again")
       } else {
         board = newBoard
-        player = TicTacToe.nextPlayer(player)
+        player = Player.nextPlayer(player)
       }
     }
     displayResult(board, bw)
@@ -37,7 +37,7 @@ object Run {
     return new BufferedWriter(writer)
   }
 
-  def playerInput(board: Array[PlayerEnum.Value], player: PlayerEnum.Value, br: BufferedReader, bw: BufferedWriter) : String = {
+  def playerInput(board: Array[Player.Value], player: Player.Value, br: BufferedReader, bw: BufferedWriter) : String = {
     bw.write("\n")
     bw.write("Current Board:")
     bw.write("\n")
@@ -48,7 +48,7 @@ object Run {
     return br.readLine()
   }
 
-  def displayResult(board: Array[PlayerEnum.Value], bw: BufferedWriter) {
+  def displayResult(board: Array[Player.Value], bw: BufferedWriter) {
     val result = TicTacToe.displayResult(board)
     bw.write(result)
     bw.flush()
