@@ -1,3 +1,5 @@
+seq(com.typesafe.sbt.SbtStartScript.startScriptForClassesSettings: _*)
+
 name := "TicTacToe"
 
 version := "1.0"
@@ -31,5 +33,3 @@ libraryDependencies ++= {
 }
 
 seq(webSettings: _*)
-
-seq(com.typesafe.sbt.SbtStartScript.startScriptForClassesSettings: _*)
