@@ -6,7 +6,7 @@ version := "1.0"
 
 scalaVersion := "2.10.3"
 
-mainClass in Compile := Some("com.markdessain.game.Run")
+mainClass in Compile := Some("com.markdessain.Server")
 
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0" % "test"
 
@@ -33,3 +33,5 @@ libraryDependencies ++= {
 }
 
 seq(webSettings: _*)
+
+assemblySettings
