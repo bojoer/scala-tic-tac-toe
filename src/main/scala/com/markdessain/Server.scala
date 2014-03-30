@@ -1,18 +1,21 @@
 package com.markdessain
 
-import akka.actor.{Props, ActorSystem}
-import spray.servlet.WebBoot
 import com.markdessain.actor.GameActor
+import akka.actor.{ActorSystem, Props}
+import akka.io.IO
+import spray.can.Http
 
-// this class is instantiated by the servlet initializer
-// it needs to have a default constructor and implement
-// the spray.servlet.WebBoot trait
-class Server extends WebBoot {
+object Server extends App {
+
+  val host = "0.0.0.0"
+  val port = Option(System.getenv("PORT")).getOrElse("8080").toInt
 
   // we need an ActorSystem to host our application in
-  val system = ActorSystem("example")
+  implicit val system = ActorSystem("on-spray-can")
 
-  // the service actor replies to incoming HttpRequests
-  val serviceActor = system.actorOf(Props[GameActor])
+  // create and start our service actor
+  val service = system.actorOf(Props[GameActor], "game-service")
 
+  // start a new HTTP server on port 8080 with our service actor as the handler
+  IO(Http) ! Http.Bind(service, interface = host, port = port)
 }
