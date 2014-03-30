@@ -3,7 +3,10 @@ package com.markdessain.game
 import java.io._
 
 object Run {
-//    def main(args: Array[String]) {
+  def main(args: Array[String]) {
+    println("Testing")
+  }
+    //    def main(args: Array[String]) {
 //      val br = getBufferedReader()
 //      val bw = getBufferedWriter()
 //      playGame(br, bw)
