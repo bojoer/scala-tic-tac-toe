@@ -7,6 +7,6 @@ after_success:
   - python ftp_deploy.py
 env:
   global:
-    - secure: "0IMPTBtjdXyAnK2o1sp86EJNMk5waaqW1FmyVlVt8Cx1hd9m4ZiKtXbRlslxh8Kz7KoMZpZoi4K47vDkEI0WRjFvEHE2k3BG6uk7nCujVdR2nqsCnYIoeXQ/llNuEQZNhQvNCwv4Sn0sLIcm9E2MtpVRbFABjAmF8WvL2UWPGdw="
-    - secure: "hP43m56E/hk85yG3ZqO2GdukruYEOdz+vGj7R0iZjTWrFWDEwBd16PgBel11kSamhL35LIi3y17hlfA0iKUllSf0yAK3NMewBQWGz5F5js1+IUJQdYsB4nxA9gfvBZ8C3lDKdxTP02vs5EJAni2RHpmRjdExN7wePmpRAb0kYJc="
-
+    -  secure: "BOKpTzyceo62w9XxLQMfrlgGCkKmtfUdolsFVl9+ZOHlTMZPPyre3Sp2n8UsmCybcsC4BMY0SzWSCld97nuMjGj4Bg7wSFjKSH43qIGTxOF3Mh2nFusH4o2d3GgI2tZvYTSTeZOzSeVGa7dXDbygbX/OkEtY/8m580GatiU+XRY="
+    -  secure: "20d7+ezXxVyinTGZESXF/oFRHVsaYreKByPp5Ht5LpKv6YJfMyArtRgvr29QenUNNGkZZfWXp1hnh2mMKvaImQTFNZpEbXiNDrd7sjN8HkJCP59qt+1so1L/gNnB6J3gE8viKO1EDQTglsFDo1azTKSeDW+g+ehAKoiutXFaGsA="
+    -  secure: "j6C2Aurv9EPBI45GLH4196j0qaRxCGd9zlhQj5pjaBSLItGpQwK9Pvqzg/ocYUg3fWRUmeXhB/32VGPkJ1mSWvLnjOberT15wL8ujeDGUe2lCMsUsVdGucjQRAAz5v3IVK2GOVSYnPLJV3bfIkRf8sjVN4pFYE+cVY9ElfL766I="
