@@ -4,6 +4,7 @@ scala:
 jdk:
   - oraclejdk8
 after_success:
+  - sbt ++2.10.3 assembly
   - python ftp_deploy.py
 env:
   global:
