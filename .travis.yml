@@ -4,7 +4,7 @@ scala:
 jdk:
   - oraclejdk8
 after_success:
-    "curl --ftp-create-dirs -T uploadfilename -u $FTP_USER:$FTP_PASSWORD ftp://apps.markdessain.com/files/"
+  - python ftp_deploy.py
 env:
   global:
     - secure: "0IMPTBtjdXyAnK2o1sp86EJNMk5waaqW1FmyVlVt8Cx1hd9m4ZiKtXbRlslxh8Kz7KoMZpZoi4K47vDkEI0WRjFvEHE2k3BG6uk7nCujVdR2nqsCnYIoeXQ/llNuEQZNhQvNCwv4Sn0sLIcm9E2MtpVRbFABjAmF8WvL2UWPGdw="
